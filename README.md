@@ -134,4 +134,4 @@ Proyek ini dilisensikan di bawah **Lisensi MIT**. Lihat file [`LICENSE`](https:/
 
 -----
 
-*Dibuat oleh azhar & aunu (NCHMPK) ❤️ untuk kemajuan UMKM Indonesia.*
+*Dibuat oleh Azarr & AunuHost (NCHMPK Team) ❤️ untuk kemajuan UMKM Indonesia.*
