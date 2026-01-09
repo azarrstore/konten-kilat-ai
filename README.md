@@ -1,192 +1,143 @@
 # ⚡ Konten Kilat AI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Gemini AI](https://img.shields.io/badge/Google%20AI-Gemini%20Flash-blue)](https://ai.google.dev/)
-[![Status](https://img.shields.io/badge/Status-Stable-success)]()
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge&logo=locked)](./LICENSE)
+[![Status: Commercial](https://img.shields.io/badge/Status-Commercial%20Software-blueviolet.svg?style=for-the-badge)]()
+[![Security: Active](https://img.shields.io/badge/Security-Protected-success.svg?style=for-the-badge&logo=security)](https://github.com/azarrstore)
 
-> **Automated Marketing Caption Generator for Indonesian MSMEs.**
-
-[View Demo](https://github.com/azarrstore/konten-kilat-AI) · [Report Bug](https://github.com/azarrstore/konten-kilat-AI/issues) · [Request Feature](https://github.com/azarrstore/konten-kilat-AI/issues)
+> **Next-Gen Marketing Automation for Indonesian MSMEs powered by Vision & Generative AI.**
 
 ---
 
-## ⚠️ COPYRIGHT & LEGAL NOTICE
+## ⛔ IMPORTANT LEGAL NOTICE & COPYRIGHT
 
-**Copyright © 2024-2026 Azarr & AunuHost (NCHMPK Team). All Rights Reserved.**
+**© 2024-2026 Azarr & AunuHost (NCHMPK Team). All Rights Reserved.**
 
-All source code, interface designs, graphic assets, and implementation logic within this repository are the intellectual property of the **NCHMPK Team**. While this project is open-source under the MIT License for educational and community development purposes:
+**READ CAREFULLY:**
+This repository contains **PROPRIETARY SOURCE CODE** owned by the NCHMPK Team.
 
-1.  **Mandatory Attribution:** Any form of reuse, modification, or redistribution of this code **MUST** include full attribution to the original creators (**Azarr & AunuHost**).
-2.  **No Unauthorized Commercialization:** Reselling this application as a white-label product or a paid service without written consent from the copyright holders is strictly prohibited.
-3.  **Trademark Protection:** The name "Konten Kilat AI" and associated logos are the identity of this project and may not be used to promote derivative products without permission.
+1.  **NO UNAUTHORIZED USE:** You are **NOT** allowed to copy, modify, distribute, sell, or use this software (in whole or in part) for any purpose without express written permission from the copyright holders.
+2.  **NO DERIVATIVE WORKS:** Creating "forks", "clones", or derivative products based on this codebase is strictly prohibited.
+3.  **TRADEMARK:** "Konten Kilat AI" and its associated assets are trademarks of Azarr & AunuHost.
 
-Violations of these terms will be pursued in accordance with applicable intellectual property laws.
+**Any violation of these terms will be prosecuted to the fullest extent of intellectual property laws.**
 
 ---
 
 ## 📝 Table of Contents
 
-* [About the Project](#-about-the-project)
-* [Key Features](#-key-features)
-* [Architecture & Tech Stack](#-architecture--tech-stack)
-* [System Prerequisites](#-system-prerequisites)
-* [Installation Guide](#-installation-guide)
-* [How to Use](#-how-to-use)
-* [Contribution](#-contribution)
-* [Credits & Acknowledgements](#-credits--acknowledgements)
-* [License](#-license)
+* [Overview](#-overview)
+* [Key Capabilities](#-key-capabilities)
+* [Technical Architecture](#-technical-architecture)
+* [Installation (Authorized Only)](#-installation-authorized-personnel-only)
+* [Usage Guide](#-usage-guide)
+* [Contact & Inquiries](#-contact--inquiries)
 
 ---
 
-## 🚀 About the Project
+## 🚀 Overview
 
-**Konten Kilat AI** is a revolutionary tech solution designed to bridge the digital gap for **Micro, Small, and Medium Enterprises (MSMEs)** in Indonesia.
+**Konten Kilat AI** is an enterprise-grade web application designed to revolutionize how businesses handle digital marketing. By leveraging state-of-the-art Artificial Intelligence, we automate the creative process from visual perception to persuasive copywriting.
 
-Many MSME owners possess great products but struggle with crafting compelling words (*copywriting*) for digital marketing. Our mission is to democratize access to professional digital marketing. By simply uploading a product photo, business owners receive marketing content that is:
-* Structured (Headline, Body, Call to Action).
-* Emotional and engaging for customers.
-* Optimized for social media algorithms.
-
-The system combines the power of **Vision AI** (to "see" the product) and **Generative AI** (to "write" the story), powered by **Google Gemini Flash 2.5** and **Kolosal AI GLM 4.6**.
+The system utilizes a dual-engine AI approach:
+* **Vision Engine:** Google Gemini Flash 2.5 (for high-fidelity image understanding).
+* **Language Engine:** Kolosal AI GLM 4.6 (for culturally nuanced Indonesian copywriting).
 
 ---
 
-## ✨ Key Features
+## ✨ Key Capabilities
 
-This application is developed with a focus on a friction-less **UX (User Experience)**:
+### 👁️ Cognitive Visual Analysis
+Unlike standard OCR, our Vision Engine understands context. It identifies:
+* Product Materials & Quality.
+* Lighting Conditions & Aesthetics.
+* Brand Vibe (Luxury, Casual, Rustic, etc.).
 
-### 1. 🧠 Intelligent Visual Analysis (AI Vision)
-The system doesn't just see the image; it understands the context. The AI detects:
-* Product Type & Materials.
-* Aesthetics & Vibe.
-* Hidden *Unique Selling Points* (USPs).
+### ✍️ Adaptive Copywriting Generation
+Generates three distinct marketing angles instantly:
+1.  **Viral/Trend Mode:** Optimized for TikTok/Reels algorithms (Gen Z target).
+2.  **Professional Mode:** Trust-building tone for official catalogs/LinkedIn.
+3.  **Storytelling Mode:** Soft-selling approach for community engagement.
 
-### 2. ✍️ Multi-Style Caption Generation
-Generates caption variations in a single process:
-* **Formal/Professional Style**: For LinkedIn or official catalogs.
-* **Casual/Trend Style**: For Instagram & TikTok.
-* **Hard-Selling Style**: Focused on direct sales conversion.
-
-### 3. ⚡ One-Click Action
-* **Smart Copy**: Copies text with clean line-break formatting.
-* **Direct Share**: Shortcut buttons to open relevant social media apps directly.
+### ⚡ Frictionless Workflow
+* **Zero-Edit Required:** Output is pre-formatted with line breaks and emojis.
+* **Smart-Share:** Direct integration links to major social platforms.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🛠️ Technical Architecture
 
-This project is built on a modern technology stack to ensure speed, security, and scalability.
+Built with a focus on security, performance, and scalability.
 
-| Category | Technology | Description |
+| Component | Technology | Role |
 | :--- | :--- | :--- |
-| **Frontend** | ![React](https://img.shields.io/badge/-React-black?logo=react) ![TS](https://img.shields.io/badge/-TypeScript-black?logo=typescript) | Interactive UI and type-safe code. |
-| **Visual AI** | ![Gemini](https://img.shields.io/badge/-Gemini%20Flash%202.5-8E75B2) | Google's multimodal model for high-precision image analysis. |
-| **LLM Core** | ![Kolosal AI](https://img.shields.io/badge/-Kolosal%20AI%20GLM-blue) | Natural language processing for copywriting. |
-| **Styling** | ![Tailwind](https://img.shields.io/badge/-TailwindCSS-38B2AC?logo=tailwind-css) | Responsive and modern design. |
-| **Runtime** | ![Node](https://img.shields.io/badge/-Node.js-339933?logo=node.js) | Fast JavaScript execution environment. |
+| **Frontend Core** | ![React](https://img.shields.io/badge/-React-black?logo=react) | Reactive UI Component Library. |
+| **Language** | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white) | Static Typing & Type Safety. |
+| **Styling** | ![Tailwind](https://img.shields.io/badge/-TailwindCSS-38B2AC?logo=tailwind-css) | Utility-First CSS Framework. |
+| **AI Vision** | ![Gemini](https://img.shields.io/badge/-Gemini%20Flash-8E75B2) | Multimodal Analysis. |
+| **AI LLM** | ![Kolosal](https://img.shields.io/badge/-Kolosal%20GLM-blue) | Indonesian Natural Language Generation. |
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Installation (Authorized Personnel Only)
 
-Follow this guide to run **Konten Kilat AI** on your local machine (Localhost).
+> **Warning:** This section is intended solely for authorized developers with valid access rights.
 
-### System Prerequisites
-Ensure your device has the following installed:
-* **Node.js**: Version `20.0.0` or newer.
-* **npm**: Version `10.0.0` or newer.
-* **Git**: To clone the repository.
+### Prerequisites
+* Node.js v20+
+* Private API Keys (Gemini & Kolosal)
 
-### Installation Guide
+### Setup Steps
 
-1.  **Clone Repository**
+1.  **Secure Clone**
     ```bash
     git clone [https://github.com/azarrstore/konten-kilat-AI.git](https://github.com/azarrstore/konten-kilat-AI.git)
-    cd konten-kilat-AI
     ```
 
 2.  **Install Dependencies**
-    Download all required libraries:
     ```bash
     npm install
-    # or if using yarn
-    yarn install
     ```
 
-3.  **Environment Configuration**
-    Duplicate the example `.env` file and rename it to `.env.local`:
-    ```bash
-    cp .env.example .env.local
-    ```
-    Open the `.env.local` file and fill in your credentials:
+3.  **Environment Setup**
+    Create a `.env.local` file. **DO NOT COMMIT THIS FILE.**
     ```env
-    # Get your API Key at [https://aistudio.google.com/](https://aistudio.google.com/)
-    GEMINI_API_KEY="AIzaSyBd..."
-    
-    # Other Optional Configurations
-    PUBLIC_APP_URL="http://localhost:3000"
+    # Required Credentials
+    GEMINI_API_KEY="[SECURE_KEY]"
+    # Kolosal Key is managed via Client-Side LocalStorage for security
     ```
 
-4.  **Run Application**
-    Start the development server:
+4.  **Launch Development Server**
     ```bash
     npm run dev
     ```
-    Open your browser and access: `http://localhost:3000`
 
 ---
 
-## 💡 How to Use
+## 💡 Usage Guide
 
-1.  **Upload**: Click the upload area or *drag-and-drop* your product photo (JPG/PNG).
-2.  **Wait for Analysis**: A progress bar will appear while the AI analyzes visuals and drafts the text.
-3.  **Select Result**:
-    * Review the 3 caption options generated.
-    * Use the **Copy** 📋 button to copy to clipboard.
-    * Use the **Share** 🔗 button to navigate to social media.
+1.  **Authentication:** Enter your Kolosal AI credential in the secure settings panel.
+2.  **Upload:** Drag and drop product imagery (High-Res recommended).
+3.  **Generate:** The AI pipeline processes the visual data (~3-5 seconds).
+4.  **Select & Deploy:** Choose the copy variant that fits your campaign and deploy to social media.
 
 ---
 
-## 🤝 Contribution
+## 📞 Contact & Inquiries
 
-We invite developers, designers, and *prompt engineers* to contribute.
+For commercial licensing, white-labeling, or partnership inquiries, please contact the development team directly.
 
-1.  **Fork** this repository.
-2.  Create a feature *branch* (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the *branch* (`git push origin feature/AmazingFeature`).
-5.  Open a **Pull Request**.
-
-> **Note:** Ensure your code passes *linting* and contains no *breaking changes*.
-
----
-
-## 🙏 Credits & Acknowledgements
-
-This project would not be possible without the incredible support from:
-
-* **IMPHNEN X KOLOSAL Hackathon**: For providing an inspiring competition platform.
-* **Google Gemini Team**: For access to the powerful Multimodal API.
-* **Kolosal AI**: For the efficient *Large Language Model* technology.
-* **Open Source Community**: For the React library and ecosystem.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License** with additional Intellectual Property clauses.
-See the [`LICENSE`](./LICENSE) file for more information.
+**NCHMPK Team**
+* **Azarr** (Lead Developer)
+* **AunuHost** (Infrastructure & System Architect)
 
 ---
 
 <div align="center">
   <br/>
-  <b>Made with ❤️ and ☕ by NCHMPK Team</b>
+  <b>CONFIDENTIAL & PROPRIETARY</b>
   <br/>
-  <i>(Azarr & AunuHost)</i>
+  <i>Unauthorized distribution is a violation of applicable laws.</i>
   <br/>
   <br/>
-  © 2026 Konten Kilat AI Team. All Rights Reserved.
+  © 2026 Azarr & AunuHost. All Rights Reserved.
 </div>
