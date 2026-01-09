@@ -6,6 +6,7 @@ import { StepIndicator } from './components/StepIndicator';
 import { ImageUploader } from './components/ImageUploader';
 
 const App: React.FC = () => {
+  // State Management
   const [kolosalKey, setKolosalKey] = useState<string>('');
   const [showKeyInput, setShowKeyInput] = useState<boolean>(false);
   const [showSaveConfirmation, setShowSaveConfirmation] = useState<boolean>(false);
@@ -19,7 +20,7 @@ const App: React.FC = () => {
     error: null,
   });
 
-  // Load Kolosal key on mount
+  // Effect: Load stored data on mount
   useEffect(() => {
     const savedKey = localStorage.getItem('KOLOSAL_API_KEY');
     if (savedKey) setKolosalKey(savedKey);
@@ -30,7 +31,7 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Apply theme to <body>
+  // Effect: Apply theme classes to body
   useEffect(() => {
     if (theme === 'dark') {
       document.body.classList.add('hell-mode');
@@ -42,7 +43,9 @@ const App: React.FC = () => {
     localStorage.setItem('KK_THEME', theme);
   }, [theme]);
 
+  // Handlers
   const handleSaveKey = () => {
+    if (!kolosalKey.trim()) return;
     localStorage.setItem('KOLOSAL_API_KEY', kolosalKey);
     setShowSaveConfirmation(true);
     setTimeout(() => {
@@ -52,13 +55,13 @@ const App: React.FC = () => {
 
   const handleImageSelect = async (file: File) => {
     if (!kolosalKey) {
-      alert('Mohon masukkan API Key Kolosal Anda terlebih dahulu di menu pengaturan.');
+      alert('Please enter your Kolosal API Key in the settings menu first.');
       setShowKeyInput(true);
       return;
     }
 
     // Reset state for new process
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       status: 'analyzing_image',
       error: null,
@@ -69,14 +72,13 @@ const App: React.FC = () => {
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64String = reader.result as string;
-
-      setState(prev => ({ ...prev, imageSrc: base64String }));
+      setState((prev) => ({ ...prev, imageSrc: base64String }));
 
       try {
         // Step 1: Gemini Vision Analysis
         const description = await analyzeImageWithGemini(base64String, file.type);
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           imageDescription: description,
           status: 'generating_copy',
@@ -85,16 +87,16 @@ const App: React.FC = () => {
         // Step 2: Kolosal AI Copywriting
         const copy = await generateMarketingCopy(description, kolosalKey);
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           finalCopy: copy,
           status: 'complete',
         }));
       } catch (err: any) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           status: 'error',
-          error: err?.message || 'Terjadi kesalahan tidak terduga.',
+          error: err?.message || 'An unexpected error occurred.',
         }));
       }
     };
@@ -102,8 +104,9 @@ const App: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
+  // Utilities
   const prepareContentForShare = (rawText: string) => {
-    const appPromo = '\n\n✨ Dibuat dengan Konten Kilat AI - Coba sekarang!';
+    const appPromo = '\n\n✨ Made with Konten Kilat AI - Try it now!';
     return rawText.trim() + appPromo;
   };
 
@@ -131,12 +134,12 @@ const App: React.FC = () => {
         break;
       case 'instagram':
         navigator.clipboard.writeText(finalContent);
-        alert('Teks telah disalin! Mengarahkan ke Instagram...');
+        alert('Text copied! Redirecting to Instagram...');
         window.open('https://www.instagram.com/', '_blank');
         break;
       case 'tiktok':
         navigator.clipboard.writeText(finalContent);
-        alert('Teks telah disalin! Mengarahkan ke TikTok...');
+        alert('Text copied! Redirecting to TikTok...');
         window.open('https://www.tiktok.com/', '_blank');
         break;
     }
@@ -145,22 +148,27 @@ const App: React.FC = () => {
   const handleCopy = (content: string) => {
     const finalContent = prepareContentForShare(content);
     navigator.clipboard.writeText(finalContent);
-    alert('Teks berhasil disalin ke clipboard!');
+    alert('Text successfully copied to clipboard!');
   };
 
   const renderMarkdown = (text: string) => {
-    if (!text || !(window as any).marked) return { __html: text || '' };
-    return { __html: (window as any).marked.parse(text) };
+    if (!text) return { __html: '' };
+    // Safety check if marked is loaded globally
+    if ((window as any).marked) {
+      return { __html: (window as any).marked.parse(text) };
+    }
+    // Fallback if marked isn't loaded
+    return { __html: text.replace(/\n/g, '<br />') };
   };
 
   const getVariations = (fullText: string | null) => {
     if (!fullText) return [];
-    const delimiter = '---BATAS_VARIASI---';
+    const delimiter = '---BATAS_VARIASI---'; // Keep the internal delimiter consistent
     if (fullText.includes(delimiter)) {
       return fullText
         .split(delimiter)
-        .map(v => v.trim())
-        .filter(v => v.length > 0);
+        .map((v) => v.trim())
+        .filter((v) => v.length > 0);
     }
     return [fullText];
   };
@@ -170,32 +178,32 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-sky-50 to-violet-100 py-10 px-4 sm:px-6 lg:px-8 animated-bg">
       <div className="max-w-5xl mx-auto relative">
-        {/* Header */}
+        {/* Header Section */}
         <div className="text-center mb-10 relative">
-          {/* Tombol toggle tema Surga / Neraka */}
+          {/* Theme Toggle: Heaven / Hell */}
           <button
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             className="absolute left-0 top-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border border-slate-200/70 bg-white/70 backdrop-blur theme-toggle shadow-sm hover:-translate-y-0.5 hover:shadow-md hover:border-sky-300 transition-all"
-            title={theme === 'light' ? 'Ganti ke mode Neraka (gelap)' : 'Ganti ke mode Surga (terang)'}
+            title={theme === 'light' ? 'Switch to Hell Mode' : 'Switch to Heaven Mode'}
           >
             {theme === 'light' ? (
               <>
                 <span className="w-4 h-4 rounded-full bg-gradient-to-br from-sky-400 to-amber-300 shadow-sm" />
-                <span>Surga</span>
+                <span>Heaven</span>
               </>
             ) : (
               <>
                 <span className="w-4 h-4 rounded-full bg-gradient-to-br from-red-500 via-orange-500 to-yellow-400 shadow-sm" />
-                <span>Neraka</span>
+                <span>Hell</span>
               </>
             )}
           </button>
 
-          {/* Tombol Pengaturan API Key (roda) – spin tanpa delay efek float */}
+          {/* Settings Button */}
           <button
             onClick={() => setShowKeyInput(!showKeyInput)}
             className="absolute right-0 top-0 text-slate-400 hover:text-sky-500 settings-spin"
-            title="Pengaturan API Key"
+            title="API Key Settings"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -213,13 +221,13 @@ const App: React.FC = () => {
             </svg>
           </button>
 
-          {/* Badge / tagline kecil */}
+          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-white/70 shadow-sm border border-slate-200/60 text-xs font-medium text-sky-700">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Vision + Copywriting • Powered by AI</span>
           </div>
 
-          {/* Judul & Subjudul */}
+          {/* Main Title */}
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 neon-title">
             Konten Kilat{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500">
@@ -227,8 +235,7 @@ const App: React.FC = () => {
             </span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg text-slate-500 subtitle-glow">
-            Ubah foto produk menjadi konten pemasaran level sultan — lengkap dengan variasi caption yang siap viral di
-            semua platform.
+            Turn product photos into top-tier marketing content — complete with viral-ready captions for every platform.
           </p>
         </div>
 
@@ -241,14 +248,13 @@ const App: React.FC = () => {
                   Kolosal AI API Key
                 </label>
                 <p className="text-xs text-slate-500 mb-2">
-                  Kunci ini hanya disimpan di browser Anda (localStorage) dan digunakan untuk memanggil Kolosal GLM
-                  4.6.
+                  This key is stored locally in your browser and used solely to call Kolosal GLM 4.6.
                 </p>
               </div>
               {showSaveConfirmation && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1 text-[11px] font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Tersimpan
+                  Saved
                 </span>
               )}
             </div>
@@ -257,21 +263,21 @@ const App: React.FC = () => {
               <input
                 type="password"
                 value={kolosalKey}
-                onChange={e => setKolosalKey(e.target.value)}
-                placeholder="Masukkan API Key Kolosal AI Anda"
+                onChange={(e) => setKolosalKey(e.target.value)}
+                placeholder="Enter your Kolosal AI API Key"
                 className="flex-1 w-full rounded-lg border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-700 shadow-inner focus:border-sky-400 focus:ring-1 focus:ring-sky-300 outline-none"
               />
               <button
                 onClick={handleSaveKey}
                 className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 active:scale-95 shadow-md"
               >
-                Simpan
+                Save
               </button>
             </div>
           </div>
         )}
 
-        {/* Main Content */}
+        {/* Main Content Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Upload & Preview */}
           <div className="lg:col-span-5 space-y-6">
@@ -292,7 +298,7 @@ const App: React.FC = () => {
                   <circle cx="9" cy="9" r="2" />
                   <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L9 18" />
                 </svg>
-                Upload Produk
+                Upload Product
               </h2>
 
               <ImageUploader
@@ -312,12 +318,12 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {/* Step 1 Result: Description (Optional/Debug) */}
+              {/* Step 1 Result: Description (Debug) */}
               {state.imageDescription && (
                 <div className="mt-6 bg-white/80 glass-card rounded-xl shadow-sm p-4 border border-blue-100/80">
                   <details className="text-sm text-slate-600">
                     <summary className="font-medium cursor-pointer text-sky-700 hover:text-sky-800">
-                      Lihat Analisis Visual Gemini
+                      View Gemini Visual Analysis
                     </summary>
                     <p className="mt-2 p-2 bg-slate-50 rounded border border-slate-100 text-xs leading-relaxed max-h-40 overflow-y-auto">
                       {state.imageDescription}
@@ -367,10 +373,10 @@ const App: React.FC = () => {
                     >
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                     </svg>
-                    Pilihan Konten
+                    Content Options
                   </h2>
                   <span className="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">
-                    {variations.length} Variasi Tersedia
+                    {variations.length} Variations Available
                   </span>
                 </div>
 
@@ -381,7 +387,7 @@ const App: React.FC = () => {
                   >
                     <div className="bg-slate-50/80 px-6 py-3 border-b border-slate-100 flex justify-between items-center">
                       <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Opsi #{idx + 1}
+                        Option #{idx + 1}
                       </span>
                     </div>
                     <div className="p-6">
@@ -397,7 +403,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => handleShare('twitter', variantText)}
                             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200/80 bg-slate-50 hover:bg-sky-50 transition-all"
-                            title="Share ke Twitter"
+                            title="Share to Twitter"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -417,7 +423,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => handleShare('facebook', variantText)}
                             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200/80 bg-slate-50 hover:bg-blue-50 transition-all"
-                            title="Share ke Facebook"
+                            title="Share to Facebook"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -437,7 +443,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => handleShare('linkedin', variantText)}
                             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200/80 bg-slate-50 hover:bg-blue-50 transition-all"
-                            title="Share ke LinkedIn"
+                            title="Share to LinkedIn"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -462,7 +468,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => handleShare('instagram', variantText)}
                             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200/80 bg-slate-50 hover:bg-pink-50 transition-all"
-                            title="Salin & Buka Instagram"
+                            title="Copy & Open Instagram"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -484,7 +490,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => handleShare('tiktok', variantText)}
                             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200/80 bg-slate-50 hover:bg-slate-200 transition-all"
-                            title="Salin & Buka TikTok"
+                            title="Copy & Open TikTok"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -520,7 +526,7 @@ const App: React.FC = () => {
                             <rect x="9" y="9" width="13" height="13" rx="2" />
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                           </svg>
-                          Salin Teks
+                          Copy Text
                         </button>
                       </div>
                     </div>
@@ -548,17 +554,17 @@ const App: React.FC = () => {
                       <circle cx="9" cy="7" r="2" />
                       <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                     </svg>
-                    <p className="text-lg">Unggah gambar untuk memulai</p>
+                    <p className="text-lg">Upload an image to start</p>
                     <p className="text-sm mt-2 opacity-60">
-                      Hasil variasi konten akan muncul secara otomatis di sini.
+                      Content variations will appear here automatically.
                     </p>
                   </>
                 ) : (
                   <div className="flex flex-col items-center">
                     <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" />
                     <p className="text-sm font-medium text-slate-500 animate-pulse text-center">
-                      {state.status === 'analyzing_image' && 'Sedang menganalisis detail visual...'}
-                      {state.status === 'generating_copy' && 'Sedang menulis berbagai variasi konten...'}
+                      {state.status === 'analyzing_image' && 'Analyzing visual details...'}
+                      {state.status === 'generating_copy' && 'Writing content variations...'}
                     </p>
                   </div>
                 )}
@@ -569,25 +575,23 @@ const App: React.FC = () => {
 
         {/* Info & Credits Section */}
         <div className="mt-12 bg-white/80 glass-card rounded-2xl shadow-lg border border-slate-200/80 p-6 md:p-8">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">Tentang Konten Kilat AI</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4">About Konten Kilat AI</h3>
           <div className="grid md:grid-cols-2 gap-8 text-sm text-slate-600">
             <div className="space-y-2">
               <p>
-                Konten Kilat AI menggabungkan kemampuan analisis visual Google Gemini 2.5 Flash dengan kecerdasan
-                bahasa Kolosal GLM 4.6 untuk membuat konten pemasaran yang relevan, menarik, dan siap pakai.
+                Konten Kilat AI combines Google Gemini 2.5 Flash's visual analysis capabilities with Kolosal GLM 4.6's language intelligence to create relevant, engaging, and ready-to-use marketing content.
               </p>
               <p>
-                Cukup unggah foto produk, biarkan AI membaca konteks visualnya, lalu pilih variasi caption atau naskah
-                yang paling cocok untuk brand Anda.
+                Simply upload a product photo, let the AI read the visual context, and choose the script or caption that best fits your brand.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-slate-700 mb-2">Cara Menggunakan</h4>
+              <h4 className="font-semibold text-slate-700 mb-2">How to Use</h4>
               <ol className="list-decimal list-inside space-y-1 leading-relaxed">
-                <li>Klik ikon pengaturan (pojok kanan atas) dan masukkan API Key Kolosal AI.</li>
-                <li>Unggah foto produk yang ingin dipasarkan.</li>
-                <li>Tunggu proses analisis visual dan penulisan naskah selesai.</li>
-                <li>Pilih variasi terbaik, lalu salin atau bagikan ke media sosial favorit Anda!</li>
+                <li>Click the settings icon (top right) and enter your Kolosal AI API Key.</li>
+                <li>Upload the product photo you want to market.</li>
+                <li>Wait for the visual analysis and copywriting process to finish.</li>
+                <li>Select the best variation, then copy or share it to your favorite social media!</li>
               </ol>
             </div>
           </div>
@@ -598,7 +602,7 @@ const App: React.FC = () => {
             Powered by Google Gemini 2.5 Flash &amp; Kolosal AI GLM 4.6
           </p>
           <p className="text-sm font-medium text-slate-500">
-            <span className="typing-credit">Credits: Azar &amp; Aunu (NCHMPK)</span>
+            <span className="typing-credit">Credits: Azarr &amp; AunuHost (NCHMPK)</span>
           </p>
         </div>
       </div>
