@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0284c7" />
     <meta
       name="description"
@@ -27,9 +27,16 @@
       :root {
         --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
       }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
       body {
         font-family: var(--font-inter);
         -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      button, a, input {
+        touch-action: manipulation;
       }
       .animated-bg {
         min-height: 100vh;
@@ -49,14 +56,17 @@
         background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%);
       }
       .glass-card {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(226, 232, 240, 0.8);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
       }
       body.hell-mode .glass-card {
-        background: rgba(17, 24, 39, 0.85);
-        border-color: rgba(55, 65, 81, 0.7);
+        background: #111827;
+        border-color: #374151;
+      }
+      body.hell-mode .theme-toggle {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f3f4f6;
       }
       body.hell-mode .glass-card .text-slate-500,
       body.hell-mode .glass-card .text-slate-600,
