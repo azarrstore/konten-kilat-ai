@@ -213,23 +213,42 @@ jobs:
                 + `\n\nStruktur file repo:\n${ctx.tree}\n${ctx.contents}`;
             }
 
-            console.log('Menghubungi AI endpoint...');
-            const resp = await axios.post(process.env.AI_ENDPOINT, {
-              model: process.env.AI_MODEL || 'mold',
-              response_format: { type: 'json_object' },
-              temperature: 0.3,
-              max_tokens: 8000,
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-              ]
-            }, {
-              headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-              timeout: 180000
-            });
+            // Panggil AI dengan retry: jika respons bukan JSON valid, minta ulang (maks 3x)
+            async function callAI(messages, attempt = 1) {
+              console.log(`Menghubungi AI endpoint... (percobaan ${attempt})`);
+              const resp = await axios.post(process.env.AI_ENDPOINT, {
+                model: process.env.AI_MODEL || 'mold',
+                response_format: { type: 'json_object' },
+                temperature: 0.3,
+                max_tokens: 8000,
+                messages
+              }, {
+                headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+                timeout: 180000
+              });
+              const choice = resp.data && resp.data.choices && resp.data.choices[0];
+              if (!choice || !choice.message || typeof choice.message.content !== 'string') {
+                throw new Error('Endpoint tidak mengembalikan format chat completion valid: ' + JSON.stringify(resp.data).slice(0, 500));
+              }
+              const raw = choice.message.content;
+              try {
+                return extractJSON(raw);
+              } catch {
+                console.log(`Percobaan ${attempt} gagal parse. Cuplikan respons AI:\n${raw.slice(0, 1500)}`);
+                if (attempt >= 3) throw new Error('AI tidak mengembalikan JSON valid setelah 3 percobaan');
+                console.log('Mencoba lagi dengan penegasan format JSON...');
+                return callAI([
+                  ...messages,
+                  { role: 'assistant', content: raw.slice(0, 4000) },
+                  { role: 'user', content: 'Respons di atas BUKAN JSON valid. Ulangi SEKARANG hanya dengan JSON mentah: tanpa teks pembuka/penutup, tanpa markdown fence.' }
+                ], attempt + 1);
+              }
+            }
 
-            // FIX UTAMA: choices adalah ARRAY
-            const aiData = extractJSON(resp.data.choices[0].message.content);
+            const aiData = await callAI([
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ]);
             console.log('AI response parsed OK:', aiData.explanation);
 
             // 1. Tulis file + CHANGELOG + commit + push (dilewati untuk komentar PR)
