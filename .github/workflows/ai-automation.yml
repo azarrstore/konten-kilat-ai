@@ -1,4 +1,4 @@
-name: AI Ultimate Automation (Mold Combo)
+name: AI Ultimate Automation (Mold Combo) - Konten Kilat AI
 
 on:
   # 1. Pemicu Issue & Komentar (baca, balas, auto-fix)
@@ -21,7 +21,7 @@ on:
 
 # Mencegah dua job jalan barengan (tabrakan push)
 concurrency:
-  group: ai-ubot-agent
+  group: ai-kontenkilat-agent
   cancel-in-progress: false
 
 permissions:
@@ -138,6 +138,33 @@ jobs:
             return 'v1.0.0';
           }
 
+          // Cek apakah repo sudah punya release apa pun
+          async function hasAnyRelease(octokit, owner, repo) {
+            const { data } = await octokit.rest.repos.listReleases({ owner, repo, per_page: 1 });
+            return data.length > 0;
+          }
+
+          // Tambah entri ke CHANGELOG.md (terbaru di atas)
+          function updateChangelog(explanation, files) {
+            const p = path.join(REPO_ROOT, 'CHANGELOG.md');
+            const date = new Date().toISOString().slice(0, 10);
+            const entry = `## ${date} — ${explanation}\n\n${files.map(f => `- \`${f}\``).join('\n')}\n`;
+            let head = '# Changelog\n\n';
+            let rest = '';
+            try {
+              const cur = fs.readFileSync(p, 'utf8');
+              const nl = cur.indexOf('\n');
+              if (cur.startsWith('#') && nl !== -1) {
+                head = cur.slice(0, nl + 1) + '\n';
+                rest = cur.slice(nl + 1).replace(/^\n+/, '');
+              } else if (!cur.startsWith('#')) {
+                rest = cur;
+              }
+            } catch { /* file belum ada, buat baru */ }
+            fs.writeFileSync(p, head + entry + '\n' + rest, 'utf8');
+            console.log('CHANGELOG.md diperbarui.');
+          }
+
           async function run() {
             const context = github.context;
             const token = process.env.GIT_PAT;
@@ -151,7 +178,7 @@ jobs:
             const isIssueEvent = context.eventName === 'issues' || context.eventName === 'issue_comment';
             const isPR = !!(context.payload.issue && context.payload.issue.pull_request);
 
-            const systemPrompt = `Anda adalah AI senior developer untuk project Telegram userbot.
+            const systemPrompt = `Anda adalah AI senior developer untuk project "Konten Kilat AI" — aplikasi web React + TypeScript + Tailwind (Vite) untuk UMKM Indonesia. Alur utama: user upload foto produk → AI vision (Gemini) menganalisis gambar → AI language (Kolosal GLM) men-generate 3 caption marketing Bahasa Indonesia (mode Viral, Professional, Storytelling).
             Tugas: analisis kode, perbaiki bug, optimasi, atau implementasi fitur.
 
             ATURAN KERAS:
@@ -161,8 +188,8 @@ jobs:
             4. Perubahan minimal dan aman. JANGAN hapus file, JANGAN tulis secret/key ke kode, JANGAN ubah workflow CI.
             5. Jika tidak ada yang perlu diubah, kembalikan "files_to_update": [].
             6. "should_release": true HANYA jika ada perubahan yang terlihat user (fitur/fix penting). Jangan release untuk refactor kecil.
-            7. BRANDING WAJIB: setiap pesan/output yang dilihat user HARUS memuat footer "AunuUbot". Pertahankan pola footer yang sudah ada di project dan terapkan konsisten di semua pesan baru.
-            8. UI HARUS KEREN: untuk menu/fitur baru atau yang diperbaiki, SELALU gunakan tombol interaktif (inline buttons) yang rapi dan modern — JANGAN kirim teks polos biasa yang membosankan.
+            7. BRANDING WAJIB: pertahankan identitas "Konten Kilat AI" di judul/header, dan footer WAJIB bertuliskan "NCHMPK Team". Jangan mengubah nama brand.
+            8. UI HARUS KEREN: setiap halaman/komponen baru atau yang diperbaiki HARUS modern, rapi, dan responsif mobile-first (UMKM mayoritas pakai HP) — JANGAN buat tampilan polos/membosankan. Manfaatkan Tailwind sepenuhnya.
             9. JANGAN PERNAH memotong JSON di tengah. Jika banyak file perlu diubah, dahulukan yang terpenting (maks 3 file per respons) — lebih baik sedikit file yang lengkap daripada banyak yang terpotong.`;
 
             let userPrompt = '';
@@ -181,7 +208,7 @@ jobs:
             } else {
               const ctx = buildRepoContext();
               const manual = (context.payload.inputs && context.payload.inputs.instruction || '').trim();
-              userPrompt = `Ini pemindaian otomatis terjadwal untuk project Telegram userbot. `
+              userPrompt = `Ini pemindaian otomatis terjadwal untuk project Konten Kilat AI (React+TS+Vite). `
                 + `Periksa kode berikut, cari bug nyata, inkonsistensi, atau optimasi yang bermakna. `
                 + `Jangan mengarang masalah — jika kode sudah baik, kembalikan files_to_update kosong.`
                 + (manual ? `\nInstruksi manual: ${manual}` : '')
@@ -230,14 +257,16 @@ jobs:
             ]);
             console.log('AI response parsed OK:', aiData.explanation);
 
-            // 1. Tulis file + commit + push (dilewati untuk komentar PR)
+            // 1. Tulis file + CHANGELOG + commit + push (dilewati untuk komentar PR)
             let didCommit = false;
             const updates = (aiData.files_to_update || []).filter(f => f && f.path && typeof f.content === 'string');
             if (updates.length > 0 && !isPR) {
+              const written = [];
               for (const f of updates) {
                 const p = safePath(f.path);
                 fs.mkdirSync(path.dirname(path.join(REPO_ROOT, p)), { recursive: true });
                 fs.writeFileSync(path.join(REPO_ROOT, p), f.content, 'utf8');
+                written.push(p);
                 console.log(`Ditulis: ${p}`);
               }
               sh('git config user.name "github-actions[bot]"');
@@ -246,12 +275,15 @@ jobs:
               if (!sh('git status --porcelain').trim()) {
                 console.log('Tidak ada perubahan aktual — skip commit.');
               } else {
+                const explanation = String(aiData.explanation || 'Perbaikan otomatis');
+                updateChangelog(explanation, written); // changelog ikut commit yang sama
+                sh('git add CHANGELOG.md');
                 const issueRef = isIssueEvent ? ` (#${context.payload.issue.number})` : '';
-                const msg = `🤖 AI Auto-Fix${issueRef}: ${String(aiData.explanation || 'Perbaikan otomatis').slice(0, 120)}`;
+                const msg = `🤖 AI Auto-Fix${issueRef}: ${explanation.slice(0, 120)}`;
                 sh(`git commit -m ${JSON.stringify(msg)}`);
                 sh('git push origin HEAD'); // ikut branch aktif, tidak hardcode main
                 didCommit = true;
-                console.log('Auto-commit & push berhasil.');
+                console.log('Auto-commit & push berhasil (termasuk CHANGELOG.md).');
               }
             } else if (updates.length > 0 && isPR) {
               console.log('Komentar PR: file tidak diubah, hanya analisis.');
@@ -262,8 +294,8 @@ jobs:
             // 2. Balas issue/komentar
             if (isIssueEvent) {
               let body = `### 🤖 AI Auto-Fix Bot Report\n\n${aiData.explanation || 'Dianalisis.'}\n\n`;
-              if (updates.length > 0 && !isPR) {
-                body += `**File yang diperbarui:**\n` + updates.map(f => `- \`${safePath(f.path)}\``).join('\n');
+              if (didCommit) {
+                body += `**File yang diperbarui:**\n` + updates.map(f => `- \`${safePath(f.path)}\``).join('\n') + `\n- \`CHANGELOG.md\``;
               } else {
                 body += `*Tidak ada file yang diubah.*`;
               }
@@ -275,8 +307,19 @@ jobs:
               console.log('Komentar balasan terkirim.');
             }
 
-            // 3. Release otomatis — HANYA jika ada commit baru & AI merekomendasikan
-            if (aiData.should_release === true && didCommit) {
+            // 3. Release: bootstrap v1.0.0 jika belum ada release sama sekali,
+            //    selebihnya hanya jika ada commit baru & AI merekomendasikan
+            if (!(await hasAnyRelease(octokit, owner, repo))) {
+              await octokit.rest.repos.createRelease({
+                owner, repo,
+                tag_name: 'v1.0.0',
+                name: 'Release v1.0.0 - Initial',
+                body: 'Rilis perdana otomatis oleh AI Automation.',
+                draft: false,
+                prerelease: false
+              });
+              console.log('Rilis perdana v1.0.0 langsung dibuat.');
+            } else if (aiData.should_release === true && didCommit) {
               const tag = await nextTag(octokit, owner, repo);
               await octokit.rest.repos.createRelease({
                 owner, repo,
