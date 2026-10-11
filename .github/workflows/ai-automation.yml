@@ -1,0 +1,319 @@
+name: AI Ultimate Automation (Mold Combo) - Konten Kilat AI
+
+on:
+  # 1. Pemicu Issue & Komentar (baca, balas, auto-fix)
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+  # 2. Cron — 00:00 UTC = 07:00 WIB
+  schedule:
+    - cron: '0 0 * * *'
+
+  # 3. Manual (+ input instruksi opsional)
+  workflow_dispatch:
+    inputs:
+      instruction:
+        description: 'Instruksi tambahan untuk AI (opsional)'
+        required: false
+        default: ''
+
+# Mencegah dua job jalan barengan (tabrakan push)
+concurrency:
+  group: ai-kontenkilat-agent
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  ai-process:
+    # Cegah loop saat bot membalas komentarnya sendiri
+    if: "github.event.sender.type != 'Bot'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      AI_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GIT_PAT: ${{ secrets.TOKEN_BOT_AKSES }}
+      AI_ENDPOINT: 'http://toby.hidencloud.com:24697/v1/chat/completions'
+      AI_MODEL: 'mold'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          # PAT langsung di checkout -> git push jalan tanpa hack remote URL
+          token: ${{ secrets.TOKEN_BOT_AKSES }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        # --prefix RUNNER_TEMP: node_modules ditaruh sejajar dengan ai_agent.mjs
+        # agar ESM resolver Node menemukannya (script memang sengaja di luar repo)
+        run: npm install --prefix "$RUNNER_TEMP" axios @actions/core @actions/github
+
+      - name: Run AI Agent
+        run: |
+          # Script ditulis ke RUNNER_TEMP agar TIDAK ikut ter-commit ke repo
+          cat << 'EOF' > "$RUNNER_TEMP/ai_agent.mjs"
+          import axios from 'axios';
+          import * as github from '@actions/github';
+          import * as core from '@actions/core';
+          import fs from 'fs';
+          import path from 'path';
+          import { execSync } from 'child_process';
+
+          const REPO_ROOT = process.cwd();
+          const MAX_CONTEXT_BYTES = 80000; // budget konteks kode untuk AI
+
+          function sh(cmd) {
+            return execSync(cmd, { cwd: REPO_ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+          }
+
+          // JSON extractor toleran: buang markdown fence, atau ambil substring { ... }
+          function extractJSON(raw) {
+            let t = String(raw).trim()
+              .replace(/^```json\s*/i, '')
+              .replace(/^```\s*/, '')
+              .replace(/\s*```$/, '');
+            try { return JSON.parse(t); } catch { /* lanjut ke ekstraksi */ }
+            const s = t.indexOf('{');
+            const e = t.lastIndexOf('}');
+            if (s !== -1 && e > s) return JSON.parse(t.slice(s, e + 1));
+            throw new Error('AI tidak mengembalikan JSON valid');
+          }
+
+          // Tolak path traversal (../, absolute path)
+          function safePath(p) {
+            const n = path.normalize(String(p)).replace(/^(\.\.(\/|\\|$))+/, '');
+            if (!n || n === '.' || n.startsWith('..') || path.isAbsolute(n)) {
+              throw new Error(`Path tidak aman, dilewati: ${p}`);
+            }
+            return n;
+          }
+
+          // Bangun konteks repo: struktur file + isi file (budget 80KB)
+          function buildRepoContext() {
+            let files = [];
+            try {
+              files = sh('git ls-files').split('\n').map(f => f.trim()).filter(Boolean);
+            } catch { files = []; }
+            const SKIP = [/package-lock\.json$/, /yarn\.lock$/, /\.min\.js$/, /\.(png|jpe?g|gif|ico|mp4|zip|tar\.gz|woff2?)$/i];
+            const tree = files.join('\n');
+            let budget = MAX_CONTEXT_BYTES;
+            const parts = [];
+            for (const f of files) {
+              if (budget <= 0) break;
+              if (SKIP.some(rx => rx.test(f))) continue;
+              let content;
+              try {
+                const full = path.join(REPO_ROOT, f);
+                const st = fs.statSync(full);
+                if (!st.isFile() || st.size > 40000) continue;
+                content = fs.readFileSync(full, 'utf8');
+              } catch { continue; }
+              if (content.includes('\0')) continue; // binary, lewati
+              const chunk = `\n\n===== FILE: ${f} =====\n${content.slice(0, budget)}`;
+              parts.push(chunk);
+              budget -= chunk.length;
+            }
+            return { tree, contents: parts.join(''), truncated: budget <= 0 };
+          }
+
+          // Tag release berikutnya: bump patch dari release terakhir (v1.2.3 -> v1.2.4)
+          async function nextTag(octokit, owner, repo) {
+            try {
+              const { data } = await octokit.rest.repos.getLatestRelease({ owner, repo });
+              const m = String(data.tag_name).match(/v?(\d+)\.(\d+)\.(\d+)/);
+              if (m) return `v${m[1]}.${m[2]}.${parseInt(m[3], 10) + 1}`;
+            } catch { /* belum ada release -> mulai dari v1.0.0 */ }
+            return 'v1.0.0';
+          }
+
+          // Cek apakah repo sudah punya release apa pun
+          async function hasAnyRelease(octokit, owner, repo) {
+            const { data } = await octokit.rest.repos.listReleases({ owner, repo, per_page: 1 });
+            return data.length > 0;
+          }
+
+          // Tambah entri ke CHANGELOG.md (terbaru di atas)
+          function updateChangelog(explanation, files) {
+            const p = path.join(REPO_ROOT, 'CHANGELOG.md');
+            const date = new Date().toISOString().slice(0, 10);
+            const entry = `## ${date} — ${explanation}\n\n${files.map(f => `- \`${f}\``).join('\n')}\n`;
+            let head = '# Changelog\n\n';
+            let rest = '';
+            try {
+              const cur = fs.readFileSync(p, 'utf8');
+              const nl = cur.indexOf('\n');
+              if (cur.startsWith('#') && nl !== -1) {
+                head = cur.slice(0, nl + 1) + '\n';
+                rest = cur.slice(nl + 1).replace(/^\n+/, '');
+              } else if (!cur.startsWith('#')) {
+                rest = cur;
+              }
+            } catch { /* file belum ada, buat baru */ }
+            fs.writeFileSync(p, head + entry + '\n' + rest, 'utf8');
+            console.log('CHANGELOG.md diperbarui.');
+          }
+
+          async function run() {
+            const context = github.context;
+            const token = process.env.GIT_PAT;
+            const apiKey = process.env.AI_API_KEY;
+            if (!apiKey) throw new Error('Secret OPENROUTER_API_KEY belum diisi');
+            if (!token) throw new Error('Secret TOKEN_BOT_AKSES belum diisi');
+
+            const octokit = github.getOctokit(token);
+            const { owner, repo } = context.repo;
+
+            const isIssueEvent = context.eventName === 'issues' || context.eventName === 'issue_comment';
+            const isPR = !!(context.payload.issue && context.payload.issue.pull_request);
+
+            const systemPrompt = `Anda adalah AI senior developer untuk project "Konten Kilat AI" — aplikasi web React + TypeScript + Tailwind (Vite) untuk UMKM Indonesia. Alur utama: user upload foto produk → AI vision (Gemini) menganalisis gambar → AI language (Kolosal GLM) men-generate 3 caption marketing Bahasa Indonesia (mode Viral, Professional, Storytelling).
+            Tugas: analisis kode, perbaiki bug, optimasi, atau implementasi fitur.
+
+            ATURAN KERAS:
+            1. Respons HANYA JSON valid, tanpa markdown fence, tanpa teks tambahan.
+            2. Format: { "explanation": "penjelasan singkat (Indonesia)", "files_to_update": [ { "path": "relatif/dari/repo", "content": "isi LENGKAP file" } ], "should_release": true/false, "release_notes": "..." }
+            3. "content" harus isi file UTUH, bukan diff/potongan.
+            4. Perubahan minimal dan aman. JANGAN hapus file, JANGAN tulis secret/key ke kode, JANGAN ubah workflow CI.
+            5. Jika tidak ada yang perlu diubah, kembalikan "files_to_update": [].
+            6. "should_release": true HANYA jika ada perubahan yang terlihat user (fitur/fix penting). Jangan release untuk refactor kecil.
+            7. BRANDING WAJIB: pertahankan identitas "Konten Kilat AI" di judul/header, dan footer WAJIB bertuliskan "NCHMPK Team". Jangan mengubah nama brand.
+            8. UI HARUS KEREN: setiap halaman/komponen baru atau yang diperbaiki HARUS modern, rapi, dan responsif mobile-first (UMKM mayoritas pakai HP) — JANGAN buat tampilan polos/membosankan. Manfaatkan Tailwind sepenuhnya.`;
+
+            let userPrompt = '';
+            if (isIssueEvent) {
+              const issue = context.payload.issue;
+              userPrompt = `Ada laporan/permintaan dari GitHub Issue.\nJudul: ${issue.title}\nDeskripsi: ${issue.body || '(kosong)'}`;
+              if (context.eventName === 'issue_comment') {
+                userPrompt += `\nKomentar tambahan: ${context.payload.comment.body}`;
+              }
+              if (isPR) {
+                userPrompt += `\n\nCATATAN: ini komentar pada Pull Request — JANGAN ubah file apa pun, cukup berikan analisis/jawaban. Kembalikan files_to_update kosong.`;
+              } else {
+                const ctx = buildRepoContext();
+                userPrompt += `\n\nStruktur file repo:\n${ctx.tree}\n${ctx.contents}\n\nLakukan auto-fix jika ini bug, atau implementasikan jika ini permintaan fitur.`;
+              }
+            } else {
+              const ctx = buildRepoContext();
+              const manual = (context.payload.inputs && context.payload.inputs.instruction || '').trim();
+              userPrompt = `Ini pemindaian otomatis terjadwal untuk project Konten Kilat AI (React+TS+Vite). `
+                + `Periksa kode berikut, cari bug nyata, inkonsistensi, atau optimasi yang bermakna. `
+                + `Jangan mengarang masalah — jika kode sudah baik, kembalikan files_to_update kosong.`
+                + (manual ? `\nInstruksi manual: ${manual}` : '')
+                + `\n\nStruktur file repo:\n${ctx.tree}\n${ctx.contents}`;
+            }
+
+            console.log('Menghubungi AI endpoint...');
+            const resp = await axios.post(process.env.AI_ENDPOINT, {
+              model: process.env.AI_MODEL || 'mold',
+              response_format: { type: 'json_object' },
+              temperature: 0.3,
+              max_tokens: 8000,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+              ]
+            }, {
+              headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+              timeout: 180000
+            });
+
+            // FIX UTAMA: choices adalah ARRAY
+            const aiData = extractJSON(resp.data.choices[0].message.content);
+            console.log('AI response parsed OK:', aiData.explanation);
+
+            // 1. Tulis file + CHANGELOG + commit + push (dilewati untuk komentar PR)
+            let didCommit = false;
+            const updates = (aiData.files_to_update || []).filter(f => f && f.path && typeof f.content === 'string');
+            if (updates.length > 0 && !isPR) {
+              const written = [];
+              for (const f of updates) {
+                const p = safePath(f.path);
+                fs.mkdirSync(path.dirname(path.join(REPO_ROOT, p)), { recursive: true });
+                fs.writeFileSync(path.join(REPO_ROOT, p), f.content, 'utf8');
+                written.push(p);
+                console.log(`Ditulis: ${p}`);
+              }
+              sh('git config user.name "github-actions[bot]"');
+              sh('git config user.email "github-actions[bot]@users.noreply.github.com"');
+              sh('git add -A');
+              if (!sh('git status --porcelain').trim()) {
+                console.log('Tidak ada perubahan aktual — skip commit.');
+              } else {
+                const explanation = String(aiData.explanation || 'Perbaikan otomatis');
+                updateChangelog(explanation, written); // changelog ikut commit yang sama
+                sh('git add CHANGELOG.md');
+                const issueRef = isIssueEvent ? ` (#${context.payload.issue.number})` : '';
+                const msg = `🤖 AI Auto-Fix${issueRef}: ${explanation.slice(0, 120)}`;
+                sh(`git commit -m ${JSON.stringify(msg)}`);
+                sh('git push origin HEAD'); // ikut branch aktif, tidak hardcode main
+                didCommit = true;
+                console.log('Auto-commit & push berhasil (termasuk CHANGELOG.md).');
+              }
+            } else if (updates.length > 0 && isPR) {
+              console.log('Komentar PR: file tidak diubah, hanya analisis.');
+            } else {
+              console.log('AI tidak meminta perubahan file.');
+            }
+
+            // 2. Balas issue/komentar
+            if (isIssueEvent) {
+              let body = `### 🤖 AI Auto-Fix Bot Report\n\n${aiData.explanation || 'Dianalisis.'}\n\n`;
+              if (didCommit) {
+                body += `**File yang diperbarui:**\n` + updates.map(f => `- \`${safePath(f.path)}\``).join('\n') + `\n- \`CHANGELOG.md\``;
+              } else {
+                body += `*Tidak ada file yang diubah.*`;
+              }
+              await octokit.rest.issues.createComment({
+                owner, repo,
+                issue_number: context.payload.issue.number,
+                body
+              });
+              console.log('Komentar balasan terkirim.');
+            }
+
+            // 3. Release: bootstrap v1.0.0 jika belum ada release sama sekali,
+            //    selebihnya hanya jika ada commit baru & AI merekomendasikan
+            if (!(await hasAnyRelease(octokit, owner, repo))) {
+              await octokit.rest.repos.createRelease({
+                owner, repo,
+                tag_name: 'v1.0.0',
+                name: 'Release v1.0.0 - Initial',
+                body: 'Rilis perdana otomatis oleh AI Automation.',
+                draft: false,
+                prerelease: false
+              });
+              console.log('Rilis perdana v1.0.0 langsung dibuat.');
+            } else if (aiData.should_release === true && didCommit) {
+              const tag = await nextTag(octokit, owner, repo);
+              await octokit.rest.repos.createRelease({
+                owner, repo,
+                tag_name: tag,
+                name: `Release ${tag} - AI Automated`,
+                body: aiData.release_notes || 'Otomatis di-generate oleh AI.',
+                draft: false,
+                prerelease: false
+              });
+              console.log(`Release baru dibuat: ${tag}`);
+            } else {
+              console.log('Skip release.');
+            }
+          }
+
+          run().catch(err => {
+            console.error('Error:', err.response ? JSON.stringify(err.response.data) : err.message);
+            core.setFailed(err.message);
+          });
+          EOF
+
+          node "$RUNNER_TEMP/ai_agent.mjs"
