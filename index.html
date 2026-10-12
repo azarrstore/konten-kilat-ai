@@ -4,84 +4,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0284c7" />
-    <meta
-      name="description"
-      content="Konten Kilat AI - Generator caption pemasaran otomatis untuk UMKM Indonesia didukung Gemini & Kolosal AI."
-    />
+    <meta name="description" content="Konten Kilat AI - Generator caption pemasaran otomatis untuk UMKM Indonesia didukung Gemini & Kolosal AI." />
     <meta property="og:title" content="Konten Kilat AI" />
-    <meta
-      property="og:description"
-      content="Ubah foto produk jadi caption viral siap pakai dalam hitungan detik."
-    />
+    <meta property="og:description" content="Ubah foto produk jadi caption viral siap pakai dalam hitungan detik." />
     <meta property="og:type" content="website" />
     <title>Konten Kilat AI</title>
+    <script>try{var t=localStorage.getItem('KK_THEME');if(t==='dark'){document.documentElement.classList.add('hell-mode')} }catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
-      :root {
-        --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
-      }
-      * {
-        -webkit-tap-highlight-color: transparent;
-      }
-      body {
-        font-family: var(--font-inter);
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-      button, a, input {
-        touch-action: manipulation;
-      }
-      .animated-bg {
-        min-height: 100vh;
-      }
-      body.heaven-mode {
-        background-color: #f8fafc;
-        color: #0f172a;
-      }
-      body.heaven-mode .animated-bg {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
-      }
-      body.hell-mode {
-        background-color: #030712;
-        color: #f3f4f6;
-      }
-      body.hell-mode .animated-bg {
-        background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%);
-      }
-      .glass-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-      }
-      body.hell-mode .glass-card {
-        background: #111827;
-        border-color: #374151;
-      }
-      body.hell-mode .theme-toggle {
-        background: #1f2937;
-        border-color: #374151;
-        color: #f3f4f6;
-      }
-      body.hell-mode .glass-card .text-slate-500,
-      body.hell-mode .glass-card .text-slate-600,
-      body.hell-mode .glass-card .text-slate-700 {
-        color: #9ca3af;
-      }
-      body.hell-mode .glass-card .text-slate-800 {
-        color: #f9fafb;
-      }
-      .primary-cta {
-        background: linear-gradient(135deg, #0284c7, #4f46e5);
-      }
-      body.hell-mode .primary-cta {
-        background: linear-gradient(135deg, #dc2626, #ea580c);
-      }
+      :root { --font-inter: 'Inter', system-ui, -apple-system, sans-serif; }
+      * { -webkit-tap-highlight-color: transparent; }
+      body { font-family: var(--font-inter); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+      button, a, input { touch-action: manipulation; }
+      .animated-bg { min-height: 100vh; }
+      body.heaven-mode { background-color: #f8fafc; color: #0f172a; }
+      body.heaven-mode .animated-bg { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%); }
+      body.hell-mode { background-color: #030712; color: #f3f4f6; }
+      body.hell-mode .animated-bg { background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e1b4b 100%); }
+      .glass-card { background: #ffffff; border: 1px solid #e2e8f0; }
+      body.hell-mode .glass-card { background: #111827; border-color: #374151; }
+      body.hell-mode .theme-toggle { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+      body.hell-mode .glass-card .text-slate-500, body.hell-mode .glass-card .text-slate-600, body.hell-mode .glass-card .text-slate-700 { color: #9ca3af; }
+      body.hell-mode .glass-card .text-slate-800 { color: #f9fafb; }
+      .primary-cta { background: linear-gradient(135deg, #0284c7, #4f46e5); }
+      body.hell-mode .primary-cta { background: linear-gradient(135deg, #dc2626, #ea580c); }
     </style>
     <script type="importmap">
       {
@@ -95,6 +47,7 @@
     </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased heaven-mode">
+    <script>try{var s=localStorage.getItem('KK_THEME');if(s==='dark'){document.body.classList.add('hell-mode');document.body.classList.remove('heaven-mode')}else{document.body.classList.add('heaven-mode');document.body.classList.remove('hell-mode')}}catch(e){}</script>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

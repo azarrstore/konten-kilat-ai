@@ -8,22 +8,28 @@ interface AnalysisOptions {
 }
 
 const cleanBase64 = (rawBase64: string): string => {
-  return rawBase64.replace(/^data:[^;]+;base64,/, "");
+  // ponytail: handle charset param e.g. data:image/png;charset=utf-8;base64,
+  return rawBase64.replace(/^data:[^,]+;base64,/, "");
 };
 
 const resolveApiKey = (): string | undefined => {
+  // Direct literal access so Vite define can replace at build time
   try {
-    const p = typeof process !== 'undefined' ? (process as any).env : undefined;
-    if (p?.GEMINI_API_KEY) return p.GEMINI_API_KEY;
-    if (p?.API_KEY) return p.API_KEY;
-    if (p?.NEXT_PUBLIC_GEMINI_API_KEY) return p.NEXT_PUBLIC_GEMINI_API_KEY;
-    if (p?.REACT_APP_GEMINI_API_KEY) return p.REACT_APP_GEMINI_API_KEY;
+    const direct = (process as any)?.env?.GEMINI_API_KEY || (process as any)?.env?.API_KEY;
+    if (direct) return direct;
   } catch {}
+  // Fallback via import.meta.env (Vite standard)
   try {
     const m = (import.meta as any)?.env;
     if (m?.GEMINI_API_KEY) return m.GEMINI_API_KEY;
     if (m?.VITE_GEMINI_API_KEY) return m.VITE_GEMINI_API_KEY;
     if (m?.API_KEY) return m.API_KEY;
+  } catch {}
+  // Legacy env names
+  try {
+    const p = typeof process !== 'undefined' ? (process as any).env : undefined;
+    if (p?.NEXT_PUBLIC_GEMINI_API_KEY) return p.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (p?.REACT_APP_GEMINI_API_KEY) return p.REACT_APP_GEMINI_API_KEY;
   } catch {}
   return undefined;
 };
@@ -39,7 +45,7 @@ export const analyzeImageWithGemini = async (
   }
   const ai = new GoogleGenAI({ apiKey });
   try {
-    const safeMime = mimeType || 'image/jpeg';
+    const safeMime = mimeType && mimeType.startsWith('image/') ? mimeType : 'image/jpeg';
     const imagePart = {
       inlineData: {
         mimeType: safeMime,

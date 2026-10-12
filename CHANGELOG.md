@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-12 — Bug XSS dangerouslySetInnerHTML tanpa sanitasi, window.open tanpa noopener, clipboard tanpa fallback, theme FOUC, cleanBase64 gagal charset, resolveApiKey tidak ter-replace Vite.
+
+- `App.tsx`
+- `index.html`
+- `services/geminiService.ts`
+
 ## 2026-10-11 — Fix bug crash process.env di browser, regex base64 gagal untuk gif/avif, flash theme & race localStorage, validasi file & FileReader error, clipboard async.
 
 - `vite.config.ts`
