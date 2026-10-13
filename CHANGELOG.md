@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-13 — Memperbaiki fitur drag-and-drop foto produk pada ImageUploader yang sebelumnya tidak memiliki drag event listener sehingga file drop membuka tab browser baru, serta reset input file value agar dapat memilih ulang file yang sama.
+
+- `components/ImageUploader.tsx`
+
 ## 2026-10-12 — Bug XSS dangerouslySetInnerHTML tanpa sanitasi, window.open tanpa noopener, clipboard tanpa fallback, theme FOUC, cleanBase64 gagal charset, resolveApiKey tidak ter-replace Vite.
 
 - `App.tsx`
