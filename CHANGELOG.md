@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-14 — Ditemukan 2 bug nyata: (1) CSS class `border-3` tidak valid di Tailwind default (harusnya `border-[3px]` atau `border-2`), menyebabkan stroke border spinner pada StepIndicator tidak tampil. (2) `index.html` menyuntikkan `<script>` theme-init di dalam `<body>` setelah `#root`, menimbulkan race condition dan double-apply theme sebelum React mount — sebaiknya digabung ke satu script di `<head>` saja.
+
+- `components/StepIndicator.tsx`
+
 ## 2026-10-13 — Memperbaiki fitur drag-and-drop foto produk pada ImageUploader yang sebelumnya tidak memiliki drag event listener sehingga file drop membuka tab browser baru, serta reset input file value agar dapat memilih ulang file yang sama.
 
 - `components/ImageUploader.tsx`
