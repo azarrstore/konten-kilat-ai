@@ -9,7 +9,15 @@
     <meta property="og:description" content="Ubah foto produk jadi caption viral siap pakai dalam hitungan detik." />
     <meta property="og:type" content="website" />
     <title>Konten Kilat AI</title>
-    <script>try{var t=localStorage.getItem('KK_THEME');if(t==='dark'){document.documentElement.classList.add('hell-mode')} }catch(e){}</script>
+    <script>
+      // Anti-FOUC: apply theme before first paint
+      try {
+        var t = localStorage.getItem('KK_THEME');
+        if (t === 'dark') {
+          document.documentElement.classList.add('hell-mode');
+        }
+      } catch(e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -47,7 +55,16 @@
     </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased heaven-mode">
-    <script>try{var s=localStorage.getItem('KK_THEME');if(s==='dark'){document.body.classList.add('hell-mode');document.body.classList.remove('heaven-mode')}else{document.body.classList.add('heaven-mode');document.body.classList.remove('hell-mode')}}catch(e){}</script>
+    <script>
+      // Sync body classes immediately before React mounts
+      try {
+        var s = localStorage.getItem('KK_THEME');
+        if (s === 'dark') {
+          document.body.classList.add('hell-mode');
+          document.body.classList.remove('heaven-mode');
+        }
+      } catch(e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

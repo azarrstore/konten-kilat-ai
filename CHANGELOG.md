@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-16 — Ditemukan 2 bug nyata: (1) Di index.html ada duplikasi script theme-init — satu di <head> dan satu lagi di <body>. Script di <body> redundan dan bisa menyebabkan flash karena dieksekusi setelah class 'heaven-mode' sudah di-set pada elemen <body>. Cukup satu script di <head> yang menarget documentElement, lalu React useEffect yang handle body class. (2) Di App.tsx, spinner loading menggunakan class `border-3` yang bukan class Tailwind default (Tailwind hanya punya border, border-0, border-2, border-4, border-8). Ini menyebabkan spinner border tidak tampil. Diperbaiki ke `border-[3px]`. Selain itu, script di <head> seharusnya juga set class pada body, bukan hanya documentElement, agar konsisten dengan CSS selector `body.hell-mode`. Diperbaiki index.html dan App.tsx.
+
+- `index.html`
+- `App.tsx`
+
 ## 2026-10-14 — Ditemukan 2 bug nyata: (1) CSS class `border-3` tidak valid di Tailwind default (harusnya `border-[3px]` atau `border-2`), menyebabkan stroke border spinner pada StepIndicator tidak tampil. (2) `index.html` menyuntikkan `<script>` theme-init di dalam `<body>` setelah `#root`, menimbulkan race condition dan double-apply theme sebelum React mount — sebaiknya digabung ke satu script di `<head>` saja.
 
 - `components/StepIndicator.tsx`
