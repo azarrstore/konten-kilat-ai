@@ -10,7 +10,7 @@
     <meta property="og:type" content="website" />
     <title>Konten Kilat AI</title>
     <script>
-      // Anti-FOUC: apply theme before first paint
+      // Anti-FOUC: sync theme before first paint
       try {
         var t = localStorage.getItem('KK_THEME');
         if (t === 'dark') {
@@ -38,8 +38,18 @@
       .glass-card { background: #ffffff; border: 1px solid #e2e8f0; }
       body.hell-mode .glass-card { background: #111827; border-color: #374151; }
       body.hell-mode .theme-toggle { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+      body.hell-mode .neon-title { color: #f8fafc; }
+      body.hell-mode .subtitle-glow { color: #94a3b8; }
+      body.hell-mode .header-badge { background-color: #1f2937; border-color: #374151; color: #38bdf8; }
+      body.hell-mode .settings-panel input { background-color: #1f2937; border-color: #374151; color: #f9fafb; }
       body.hell-mode .glass-card .text-slate-500, body.hell-mode .glass-card .text-slate-600, body.hell-mode .glass-card .text-slate-700 { color: #9ca3af; }
       body.hell-mode .glass-card .text-slate-800 { color: #f9fafb; }
+      body.hell-mode .glass-card .bg-slate-50 { background-color: #1f2937; border-color: #374151; }
+      body.hell-mode .glass-card button.bg-slate-50 { background-color: #1f2937; border-color: #374151; color: #e2e8f0; }
+      body.hell-mode .glass-card button.bg-slate-50:hover { background-color: #374151; }
+      body.hell-mode .glass-card .border-t, body.hell-mode .glass-card .border-b { border-color: #374151; }
+      body.hell-mode .glass-card .prose { color: #e2e8f0; }
+      body.hell-mode .glass-card .prose strong { color: #f8fafc; }
       .primary-cta { background: linear-gradient(135deg, #0284c7, #4f46e5); }
       body.hell-mode .primary-cta { background: linear-gradient(135deg, #dc2626, #ea580c); }
     </style>

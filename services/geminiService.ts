@@ -13,23 +13,21 @@ const cleanBase64 = (rawBase64: string): string => {
 };
 
 const resolveApiKey = (): string | undefined => {
-  // Direct literal access so Vite define can replace at build time
+  // Direct literal identifiers for Vite define replacement at build/serve time
   try {
-    const direct = (process as any)?.env?.GEMINI_API_KEY || (process as any)?.env?.API_KEY;
-    if (direct) return direct;
+    const k = process.env.GEMINI_API_KEY;
+    if (k && typeof k === 'string' && !k.startsWith('process.env')) return k;
   } catch {}
-  // Fallback via import.meta.env (Vite standard)
+  try {
+    const k = process.env.API_KEY;
+    if (k && typeof k === 'string' && !k.startsWith('process.env')) return k;
+  } catch {}
+  // Vite standard import.meta.env fallback
   try {
     const m = (import.meta as any)?.env;
     if (m?.GEMINI_API_KEY) return m.GEMINI_API_KEY;
     if (m?.VITE_GEMINI_API_KEY) return m.VITE_GEMINI_API_KEY;
     if (m?.API_KEY) return m.API_KEY;
-  } catch {}
-  // Legacy env names
-  try {
-    const p = typeof process !== 'undefined' ? (process as any).env : undefined;
-    if (p?.NEXT_PUBLIC_GEMINI_API_KEY) return p.NEXT_PUBLIC_GEMINI_API_KEY;
-    if (p?.REACT_APP_GEMINI_API_KEY) return p.REACT_APP_GEMINI_API_KEY;
   } catch {}
   return undefined;
 };

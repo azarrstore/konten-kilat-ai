@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-19 — Fix deteksi GEMINI_API_KEY: esbuild define Vite gagal me-replace syntax optional-chaining (process as any)?.env?.GEMINI_API_KEY sehingga melempar ReferenceError di browser; perbaiki ke literal process.env & tambahkan envPrefix di vite.config.ts. Optimasi CSS hell-mode di index.html agar judul dan elemen form terbaca jelas di dark mode.
+
+- `services/geminiService.ts`
+- `vite.config.ts`
+- `index.html`
+
 ## 2026-10-16 — Ditemukan 2 bug nyata: (1) Di index.html ada duplikasi script theme-init — satu di <head> dan satu lagi di <body>. Script di <body> redundan dan bisa menyebabkan flash karena dieksekusi setelah class 'heaven-mode' sudah di-set pada elemen <body>. Cukup satu script di <head> yang menarget documentElement, lalu React useEffect yang handle body class. (2) Di App.tsx, spinner loading menggunakan class `border-3` yang bukan class Tailwind default (Tailwind hanya punya border, border-0, border-2, border-4, border-8). Ini menyebabkan spinner border tidak tampil. Diperbaiki ke `border-[3px]`. Selain itu, script di <head> seharusnya juga set class pada body, bukan hanya documentElement, agar konsisten dengan CSS selector `body.hell-mode`. Diperbaiki index.html dan App.tsx.
 
 - `index.html`
