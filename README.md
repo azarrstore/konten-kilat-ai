@@ -1,143 +1,67 @@
-# ⚡ Konten Kilat AI
+# Security Policy
 
-[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge&logo=locked)](./LICENSE)
-[![Status: Commercial](https://img.shields.io/badge/Status-Commercial%20Software-blueviolet.svg?style=for-the-badge)]()
-[![Security: Active](https://img.shields.io/badge/Security-Protected-success.svg?style=for-the-badge&logo=security)](https://github.com/azarrstore)
-
-> **Next-Gen Marketing Automation for Indonesian MSMEs powered by Vision & Generative AI.**
+This project is open source and licensed under the MIT License. We welcome responsible disclosure of security vulnerabilities and will review reports promptly.
 
 ---
 
-## ⛔ IMPORTANT LEGAL NOTICE & COPYRIGHT
+## Supported Versions
 
-**© 2024-2026 Azarr & AunuHost (NCHMPK Team). All Rights Reserved.**
+We actively support the latest version on the default branch. Older versions may not receive security updates.
 
-**READ CAREFULLY:**
-This repository contains **PROPRIETARY SOURCE CODE** owned by the NCHMPK Team.
-
-1.  **NO UNAUTHORIZED USE:** You are **NOT** allowed to copy, modify, distribute, sell, or use this software (in whole or in part) for any purpose without express written permission from the copyright holders.
-2.  **NO DERIVATIVE WORKS:** Creating "forks", "clones", or derivative products based on this codebase is strictly prohibited.
-3.  **TRADEMARK:** "Konten Kilat AI" and its associated assets are trademarks of Azarr & AunuHost.
-
-**Any violation of these terms will be prosecuted to the fullest extent of intellectual property laws.**
+| Version | Supported |
+| :--- | :---: |
+| Latest default branch | ✅ |
+| Older releases | ⚠️ Best effort |
+| Unmaintained forks | ❌ |
 
 ---
 
-## 📝 Table of Contents
+## Reporting a Vulnerability
 
-* [Overview](#-overview)
-* [Key Capabilities](#-key-capabilities)
-* [Technical Architecture](#-technical-architecture)
-* [Installation (Authorized Only)](#-installation-authorized-personnel-only)
-* [Usage Guide](#-usage-guide)
-* [Contact & Inquiries](#-contact--inquiries)
+Please do not open a public GitHub issue for security vulnerabilities.
 
----
+Instead, report them privately using one of the following channels:
 
-## 🚀 Overview
+- Email: `kontenkilat@aunuhost.qzz.io`
+- Subject: `[SECURITY ALERT] <short description>`
 
-**Konten Kilat AI** is an enterprise-grade web application designed to revolutionize how businesses handle digital marketing. By leveraging state-of-the-art Artificial Intelligence, we automate the creative process from visual perception to persuasive copywriting.
+Please include:
 
-The system utilizes a dual-engine AI approach:
-* **Vision Engine:** Google Gemini Flash 2.5 (for high-fidelity image understanding).
-* **Language Engine:** Kolosal AI GLM 4.6 (for culturally nuanced Indonesian copywriting).
+- Affected component or file
+- Steps to reproduce the issue
+- Potential impact and severity
+- Any proof-of-concept or sample payload if available
 
----
-
-## ✨ Key Capabilities
-
-### 👁️ Cognitive Visual Analysis
-Unlike standard OCR, our Vision Engine understands context. It identifies:
-* Product Materials & Quality.
-* Lighting Conditions & Aesthetics.
-* Brand Vibe (Luxury, Casual, Rustic, etc.).
-
-### ✍️ Adaptive Copywriting Generation
-Generates three distinct marketing angles instantly:
-1.  **Viral/Trend Mode:** Optimized for TikTok/Reels algorithms (Gen Z target).
-2.  **Professional Mode:** Trust-building tone for official catalogs/LinkedIn.
-3.  **Storytelling Mode:** Soft-selling approach for community engagement.
-
-### ⚡ Frictionless Workflow
-* **Zero-Edit Required:** Output is pre-formatted with line breaks and emojis.
-* **Smart-Share:** Direct integration links to major social platforms.
+We aim to acknowledge valid reports within 48 hours and will work with you on a responsible fix timeline.
 
 ---
 
-## 🛠️ Technical Architecture
+## Security Expectations
 
-Built with a focus on security, performance, and scalability.
-
-| Component | Technology | Role |
-| :--- | :--- | :--- |
-| **Frontend Core** | ![React](https://img.shields.io/badge/-React-black?logo=react) | Reactive UI Component Library. |
-| **Language** | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white) | Static Typing & Type Safety. |
-| **Styling** | ![Tailwind](https://img.shields.io/badge/-TailwindCSS-38B2AC?logo=tailwind-css) | Utility-First CSS Framework. |
-| **AI Vision** | ![Gemini](https://img.shields.io/badge/-Gemini%20Flash-8E75B2) | Multimodal Analysis. |
-| **AI LLM** | ![Kolosal](https://img.shields.io/badge/-Kolosal%20GLM-blue) | Indonesian Natural Language Generation. |
+- Do not exploit vulnerabilities for malicious purposes.
+- Do not publicly disclose details before a fix is available.
+- Avoid testing against production systems unless you have explicit authorization.
 
 ---
 
-## ⚙️ Installation (Authorized Personnel Only)
+## Disclosure Policy
 
-> **Warning:** This section is intended solely for authorized developers with valid access rights.
+We appreciate responsible disclosure and will do our best to coordinate disclosure timing with the reporter.
 
-### Prerequisites
-* Node.js v20+
-* Private API Keys (Gemini & Kolosal)
-
-### Setup Steps
-
-1.  **Secure Clone**
-    ```bash
-    git clone [https://github.com/azarrstore/konten-kilat-AI.git](https://github.com/azarrstore/konten-kilat-AI.git)
-    ```
-
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Environment Setup**
-    Create a `.env.local` file. **DO NOT COMMIT THIS FILE.**
-    ```env
-    # Required Credentials
-    GEMINI_API_KEY="[SECURE_KEY]"
-    # Kolosal Key is managed via Client-Side LocalStorage for security
-    ```
-
-4.  **Launch Development Server**
-    ```bash
-    npm run dev
-    ```
+If a fix is confirmed, we will communicate updates through the relevant project channels and may acknowledge the reporter when appropriate.
 
 ---
 
-## 💡 Usage Guide
+## Data & API Safety
 
-1.  **Authentication:** Enter your Kolosal AI credential in the secure settings panel.
-2.  **Upload:** Drag and drop product imagery (High-Res recommended).
-3.  **Generate:** The AI pipeline processes the visual data (~3-5 seconds).
-4.  **Select & Deploy:** Choose the copy variant that fits your campaign and deploy to social media.
+This project may interact with external AI services and environment-based credentials. Please keep your API keys and environment files secure and do not commit secrets to source control.
 
 ---
 
-## 📞 Contact & Inquiries
+## Contact
 
-For commercial licensing, white-labeling, or partnership inquiries, please contact the development team directly.
+For any security-related questions or reports, contact:
 
-**NCHMPK Team**
-* **Azarr** (Lead Developer)
-* **AunuHost** (Infrastructure & System Architect)
+- `kontenkilat@aunuhost.qzz.io`
 
----
-
-<div align="center">
-  <br/>
-  <b>CONFIDENTIAL & PROPRIETARY</b>
-  <br/>
-  <i>Unauthorized distribution is a violation of applicable laws.</i>
-  <br/>
-  <br/>
-  © 2026 Azarr & AunuHost. All Rights Reserved.
-</div>
+Thank you for helping keep the project safe and healthy.

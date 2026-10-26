@@ -1,77 +1,134 @@
-# 🛡️ Security Policy & Legal Boundaries
+# ⚡ Konten Kilat AI
 
-> **PROJECT STATUS: PROPRIETARY / CLOSED SOURCE**
-> This document outlines the security protocols, reporting procedures, and legal boundaries regarding the **Konten Kilat AI** software stack.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](./LICENSE)
+[![Status: Open Source](https://img.shields.io/badge/Status-Open%20Source-blue.svg?style=for-the-badge)]()
+[![Security: Responsible Disclosure](https://img.shields.io/badge/Security-Responsible%20Disclosure-success.svg?style=for-the-badge&logo=security)](./SECURITY.md)
 
----
-
-## ⛔ Unauthorized Access & Reverse Engineering
-
-**STRICTLY PROHIBITED ACTIONS:**
-
-As this software is **Proprietary Intellectual Property** owned by **Azarr & AunuHost (NCHMPK Team)**, the following actions are strictly violations of our security policy and terms of use:
-
-1.  **Reverse Engineering:** Any attempt to decompile, disassemble, or reverse engineer the source code, API logic, or protection mechanisms is prohibited.
-2.  **License Bypassing:** Attempting to crack, bypass, or modify the API Key verification steps or client-side storage logic.
-3.  **Automated Scanning:** The use of automated vulnerability scanners or "fuzzing" tools against our production infrastructure is strictly forbidden without prior written authorization.
-
-**Violation of these terms may result in immediate revocation of access and potential legal action.**
+> Next-Gen marketing automation for Indonesian MSMEs powered by vision and generative AI.
 
 ---
 
-## 📝 Reporting a Vulnerability
+## Overview
 
-We value the security of our software and the privacy of our users. If you are an authorized user or collaborator and you have discovered a security vulnerability, we appreciate your help in disclosing it to us responsibly.
+Konten Kilat AI is an AI-powered marketing workflow for businesses that want to turn product images into ready-to-publish social content. The system combines computer vision, generative copywriting, and campaign-oriented automation to help teams create content faster.
 
-**DO NOT OPEN A PUBLIC GITHUB ISSUE** for security vulnerabilities. Publicly disclosing a vulnerability puts the entire ecosystem at risk.
-
-### How to Report
-
-Please report security issues privately via email to the core team:
-
-* **Email:** [kontenkilat@aunuhost.qzz.io]
-* **Subject:** `[SECURITY ALERT] Vulnerability in Konten Kilat AI - <Component Name>`
-
-Please include the following details in your report:
-* Type of issue (e.g., XSS, API Key Leakage, Injection).
-* Step-by-step instructions to reproduce the vulnerability.
-* Impact of the issue.
-
-### Our Response Policy
-
-1.  We will acknowledge receipt of your report within **48 hours**.
-2.  We will provide an estimated timeframe for a fix.
-3.  We will notify you once the fix has been deployed.
+The project is released under the MIT License. See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## 📦 Supported Versions
+## Key Capabilities
 
-Only the latest development branch is actively supported with security patches. Older forks or unauthorized copies are not supported.
+### Visual analysis
 
-| Version | Supported | Status |
-| :--- | :---: | :--- |
-| **HEAD (Latest)** | ✅ | **Active Support & Security Patching** |
-| Older Versions | ❌ | End of Life / No Support |
-| Unauthorized Forks | ❌ | **Illegal / No Support** |
+- Detects product attributes, composition, and visual quality.
+- Understands context such as lighting, styling, and product presentation.
+- Uses multimodal AI to interpret product imagery.
+
+### Copy generation
+
+- Produces multiple copy variants for different campaign goals.
+- Supports approaches such as viral, professional, and storytelling tones.
+- Helps generate marketing text suited to Indonesian audiences.
+
+### Workflow automation
+
+- Upload product images and generate marketing-ready content.
+- Shortens time from idea to draft publication.
+- Supports social media sharing workflows and content reuse.
 
 ---
 
-## ⚠️ Integrity & Data Safety
+## Technical Architecture
 
-**Konten Kilat AI** interacts with third-party Generative AI APIs (Google Gemini & Kolosal).
+Built with a modern web stack focused on performance and usability.
 
-* **API Key Safety:** Users are responsible for keeping their own API Keys secure. Our software stores keys locally (`localStorage`) and never transmits them to unauthorized external servers.
-* **Data Privacy:** Images uploaded for analysis are processed transiently by the AI endpoints and are not stored permanently on our servers.
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| Frontend | React | Interactive UI |
+| Language | TypeScript | Type safety and developer productivity |
+| Styling | Tailwind CSS | UI styling |
+| AI Vision | Gemini / multimodal model | Product understanding |
+| AI LLM | Kolosal / GLM-based model | Indonesian copy generation |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Node.js v20+
+- Package manager (`npm`, `pnpm`, or `yarn`)
+- API keys for the AI providers used by your environment
+
+### Setup
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/azarrstore/konten-kilat-ai.git
+   cd konten-kilat-ai
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables
+   Create a `.env.local` file and add the required credentials for the configured AI services.
+
+   Example:
+   ```env
+   GEMINI_API_KEY="your_key_here"
+   ```
+
+4. Start the development server
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Usage Guide
+
+1. Open the app in your browser.
+2. Upload a product image.
+3. Let the AI analyze the image and suggest copy directions.
+4. Review and refine the generated content.
+5. Publish or export for your campaign workflow.
+
+---
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome.
+
+- Open an issue for bugs or enhancement ideas.
+- Submit a pull request with a clear explanation.
+- Follow the project’s coding and security conventions.
+
+---
+
+## Security
+
+For security concerns and responsible disclosure, please review [SECURITY.md](./SECURITY.md).
+
+---
+
+## Contact
+
+For collaboration, support, or licensing discussions, contact the project maintainers.
+
+- Azarr
+- AunuHost
 
 ---
 
 <div align="center">
   <br/>
-  <b>Security is a shared responsibility.</b>
+  <b>Open source and community-friendly.</b>
   <br/>
-  <i>Thank you for respecting our intellectual property and security boundaries.</i>
+  <i>Licensed under the MIT License.</i>
   <br/>
   <br/>
-  © 2026 Azarr & AunuHost (NCHMPK Team).
+  © 2024-2026 Azarr & AunuHost (NCHMPK Team)
 </div>
