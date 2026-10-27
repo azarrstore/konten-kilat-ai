@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27 — Ditemukan bug nyata: README.md berisi konten SECURITY.md (Security Policy), dan SECURITY.md berisi konten README.md. Kedua file tertukar isinya. Ini menyebabkan user yang membuka repo melihat Security Policy sebagai README, dan file SECURITY.md justru berisi dokumentasi project. Diperbaiki dengan menukar kembali isi kedua file ke posisi yang benar.
+
+- `README.md`
+- `SECURITY.md`
+
 ## 2026-10-19 — Fix deteksi GEMINI_API_KEY: esbuild define Vite gagal me-replace syntax optional-chaining (process as any)?.env?.GEMINI_API_KEY sehingga melempar ReferenceError di browser; perbaiki ke literal process.env & tambahkan envPrefix di vite.config.ts. Optimasi CSS hell-mode di index.html agar judul dan elemen form terbaca jelas di dark mode.
 
 - `services/geminiService.ts`

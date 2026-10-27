@@ -1,67 +1,134 @@
-# Security Policy
+# ⚡ Konten Kilat AI
 
-This project is open source and licensed under the MIT License. We welcome responsible disclosure of security vulnerabilities and will review reports promptly.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](./LICENSE)
+[![Status: Open Source](https://img.shields.io/badge/Status-Open%20Source-blue.svg?style=for-the-badge)]()
+[![Security: Responsible Disclosure](https://img.shields.io/badge/Security-Responsible%20Disclosure-success.svg?style=for-the-badge&logo=security)](./SECURITY.md)
 
----
-
-## Supported Versions
-
-We actively support the latest version on the default branch. Older versions may not receive security updates.
-
-| Version | Supported |
-| :--- | :---: |
-| Latest default branch | ✅ |
-| Older releases | ⚠️ Best effort |
-| Unmaintained forks | ❌ |
+> Next-Gen marketing automation for Indonesian MSMEs powered by vision and generative AI.
 
 ---
 
-## Reporting a Vulnerability
+## Overview
 
-Please do not open a public GitHub issue for security vulnerabilities.
+Konten Kilat AI is an AI-powered marketing workflow for businesses that want to turn product images into ready-to-publish social content. The system combines computer vision, generative copywriting, and campaign-oriented automation to help teams create content faster.
 
-Instead, report them privately using one of the following channels:
-
-- Email: `kontenkilat@aunuhost.qzz.io`
-- Subject: `[SECURITY ALERT] <short description>`
-
-Please include:
-
-- Affected component or file
-- Steps to reproduce the issue
-- Potential impact and severity
-- Any proof-of-concept or sample payload if available
-
-We aim to acknowledge valid reports within 48 hours and will work with you on a responsible fix timeline.
+The project is released under the MIT License. See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## Security Expectations
+## Key Capabilities
 
-- Do not exploit vulnerabilities for malicious purposes.
-- Do not publicly disclose details before a fix is available.
-- Avoid testing against production systems unless you have explicit authorization.
+### Visual analysis
+
+- Detects product attributes, composition, and visual quality.
+- Understands context such as lighting, styling, and product presentation.
+- Uses multimodal AI to interpret product imagery.
+
+### Copy generation
+
+- Produces multiple copy variants for different campaign goals.
+- Supports approaches such as viral, professional, and storytelling tones.
+- Helps generate marketing text suited to Indonesian audiences.
+
+### Workflow automation
+
+- Upload product images and generate marketing-ready content.
+- Shortens time from idea to draft publication.
+- Supports social media sharing workflows and content reuse.
 
 ---
 
-## Disclosure Policy
+## Technical Architecture
 
-We appreciate responsible disclosure and will do our best to coordinate disclosure timing with the reporter.
+Built with a modern web stack focused on performance and usability.
 
-If a fix is confirmed, we will communicate updates through the relevant project channels and may acknowledge the reporter when appropriate.
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| Frontend | React | Interactive UI |
+| Language | TypeScript | Type safety and developer productivity |
+| Styling | Tailwind CSS | UI styling |
+| AI Vision | Gemini / multimodal model | Product understanding |
+| AI LLM | Kolosal / GLM-based model | Indonesian copy generation |
 
 ---
 
-## Data & API Safety
+## Installation
 
-This project may interact with external AI services and environment-based credentials. Please keep your API keys and environment files secure and do not commit secrets to source control.
+### Prerequisites
+
+- Node.js v20+
+- Package manager (`npm`, `pnpm`, or `yarn`)
+- API keys for the AI providers used by your environment
+
+### Setup
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/azarrstore/konten-kilat-ai.git
+   cd konten-kilat-ai
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables
+   Create a `.env.local` file and add the required credentials for the configured AI services.
+
+   Example:
+   ```env
+   GEMINI_API_KEY="your_key_here"
+   ```
+
+4. Start the development server
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Usage Guide
+
+1. Open the app in your browser.
+2. Upload a product image.
+3. Let the AI analyze the image and suggest copy directions.
+4. Review and refine the generated content.
+5. Publish or export for your campaign workflow.
+
+---
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome.
+
+- Open an issue for bugs or enhancement ideas.
+- Submit a pull request with a clear explanation.
+- Follow the project's coding and security conventions.
+
+---
+
+## Security
+
+For security concerns and responsible disclosure, please review [SECURITY.md](./SECURITY.md).
 
 ---
 
 ## Contact
 
-For any security-related questions or reports, contact:
+For collaboration, support, or licensing discussions, contact the project maintainers.
 
-- `kontenkilat@aunuhost.qzz.io`
+- Azarr
+- AunuHost
 
-Thank you for helping keep the project safe and healthy.
+---
+
+<div align="center">
+  <br/>
+  <b>Open source and community-friendly.</b>
+  <br/>
+  <i>Licensed under the MIT License.</i>
+  <br/>
+  <br/>
+  © 2024-2026 Azarr & AunuHost (NCHMPK Team)
+</div>
