@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-31 — Bug: index.html memiliki dua script theme-init — satu di <head> (hanya set documentElement.classList, tapi CSS selector pakai body.hell-mode sehingga tidak berpengaruh) dan satu di <body> (yang benar). Script di <head> redundan, menambah bytes tanpa fungsi. Dihapus agar tidak membingungkan dan menghindari double-write class.
+
+- `index.html`
+
 ## 2026-10-27 — Ditemukan bug nyata: README.md berisi konten SECURITY.md (Security Policy), dan SECURITY.md berisi konten README.md. Kedua file tertukar isinya. Ini menyebabkan user yang membuka repo melihat Security Policy sebagai README, dan file SECURITY.md justru berisi dokumentasi project. Diperbaiki dengan menukar kembali isi kedua file ke posisi yang benar.
 
 - `README.md`
